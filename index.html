@@ -1,0 +1,895 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuroCognitive | Stroop Research</title>
+<style>
+:root{
+  --blue:#245b83;--light:#eef5f8;--green:#26866e;
+  --orange:#e69a43;--red:#bd5353;--dark:#203344;
+  --muted:#718096;--white:#fff;--border:#dce5eb;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--light);color:var(--dark);
+  font-family:Tahoma,Arial,sans-serif;line-height:1.8;
+}
+header{
+  background:linear-gradient(135deg,#245b83,#26866e);
+  color:white;padding:22px 16px;text-align:center;
+}
+header h1{margin:0;font-size:25px}
+header p{margin:5px 0 0;font-size:13px;opacity:.9}
+.container{max-width:850px;margin:20px auto;padding:0 12px}
+.card{
+  background:white;border-radius:15px;padding:20px;
+  margin-bottom:15px;box-shadow:0 3px 14px #17364d12;
+}
+h2{font-size:19px;margin:0 0 12px;color:var(--blue)}
+h3{font-size:16px;margin:8px 0}
+label{display:block;font-size:13px;margin:10px 0 4px}
+input,select{
+  width:100%;padding:12px;border:1px solid var(--border);
+  border-radius:9px;font:inherit;background:white;
+}
+button{
+  border:0;border-radius:10px;padding:12px 17px;
+  font:inherit;font-weight:bold;cursor:pointer;
+}
+button:disabled{opacity:.4;cursor:not-allowed}
+.primary{background:var(--blue);color:white}
+.secondary{background:#e8f0f5;color:var(--blue)}
+.danger{background:#f9e9e9;color:var(--red)}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:15px}
+.note{
+  background:#fff7e9;border-right:4px solid var(--orange);
+  padding:12px;border-radius:8px;font-size:13px;
+}
+.muted{color:var(--muted);font-size:13px}
+.hidden{display:none!important}
+.progress{
+  height:9px;background:#e5edf2;border-radius:20px;overflow:hidden;
+  margin:12px 0;
+}
+.progress>div{height:100%;width:0;background:var(--green);transition:width .2s}
+.status{
+  display:flex;justify-content:space-between;gap:10px;
+  font-size:13px;color:var(--muted);flex-wrap:wrap;
+}
+.stimulus-area{
+  min-height:230px;display:flex;align-items:center;
+  justify-content:center;background:#f8fafc;
+  border:1px solid var(--border);border-radius:14px;
+  margin:18px 0;
+}
+#stimulus{
+  font-size:clamp(42px,10vw,72px);font-weight:900;
+  letter-spacing:2px;direction:rtl;
+}
+#fixation{font-size:44px;color:#9aa8b5}
+.color-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:12px;
+}
+.color-btn{
+  min-height:66px;color:white;font-size:17px;
+  border:3px solid transparent;
+}
+.color-btn:active{transform:scale(.97)}
+.color-btn:focus-visible{outline:3px solid #222}
+.red{background:#d93636}
+.blue{background:#2674c9}
+.green{background:#23945e}
+.yellow{background:#e7b323;color:#263238}
+.color-btn:disabled{opacity:.45}
+.big-number{font-size:27px;font-weight:bold;color:var(--blue)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:9px 6px;border-bottom:1px solid var(--border);text-align:center}
+th{background:#f1f6f8}
+.table-wrap{overflow-x:auto}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>NeuroCognitive</h1>
+  <p>Stroop Color–Word Test | Research Edition 1.0</p>
+  <p>Developed by M. Khoshroo | NeuroPlay</p>
+</header>
+
+<div class="container">
+
+<section class="card" id="intro">
+  <h2>آزمون استروپ</h2>
+  <p>
+    در این آزمون، توانایی توجه انتخابی، بازداری پاسخ خودکار و کنترل
+    تداخل شناختی بررسی می‌شود.
+  </p>
+  <div class="note">
+    <strong>راهنمای آزمودنی:</strong>
+    در هر مرحله باید بر اساس دستور همان مرحله پاسخ دهید.
+    چهار دکمه رنگی در پایین صفحه نمایش داده می‌شوند.
+    می‌توانید با لمس دکمه‌ها یا کلیدهای ۱، ۲، ۳ و ۴ پاسخ دهید.
+    تا حد امکان سریع و دقیق عمل کنید.
+  </div>
+
+  <label for="participant">شناسه آزمودنی</label>
+  <input id="participant" placeholder="مثلاً P001">
+
+  <label for="session">شناسه جلسه</label>
+  <input id="session" placeholder="مثلاً S01">
+
+  <label for="age">سن (سال)</label>
+  <input id="age" type="number" min="3" max="99" placeholder="مثلاً 6">
+
+  <label for="gender">جنسیت (اختیاری)</label>
+  <select id="gender">
+    <option value="">انتخاب نشده</option>
+    <option value="female">دختر</option>
+    <option value="male">پسر</option>
+    <option value="other">سایر / ثبت نشده</option>
+  </select>
+
+  <div class="note" style="margin-top:15px">
+    آزمون شامل چهار مرحله است. پیش از هر مرحله، دستورالعمل مربوط به آن
+    نمایش داده می‌شود. هر مرحله ۲۴ کوشش اصلی دارد.
+  </div>
+  <div class="actions">
+    <button class="primary" onclick="startTest()">شروع آزمون</button>
+  </div>
+</section>
+
+<section class="card hidden" id="instruction">
+  <h2 id="instructionTitle">دستورالعمل مرحله</h2>
+  <p id="instructionText"></p>
+  <div class="note" id="instructionExample"></div>
+  <p class="muted">ابتدا چند کوشش تمرینی انجام می‌شود؛ سپس مرحله اصلی آغاز خواهد شد.</p>
+  <div class="actions">
+    <button class="primary" onclick="startPractice()">شروع تمرین</button>
+  </div>
+</section>
+
+<section class="card hidden" id="testArea">
+  <div class="status">
+    <span id="conditionLabel">مرحله</span>
+    <span id="trialLabel">کوشش ۰ از ۲۴</span>
+  </div>
+  <div class="progress"><div id="progressBar"></div></div>
+
+  <div class="stimulus-area">
+    <div id="fixation">+</div>
+    <div id="stimulus" class="hidden"></div>
+  </div>
+
+  <p style="text-align:center;font-weight:bold" id="responsePrompt">
+    پاسخ مناسب را انتخاب کنید
+  </p>
+  <div class="color-grid" id="colorButtons">
+    <button class="color-btn red" data-color="red" onclick="respond('red')">قرمز</button>
+    <button class="color-btn blue" data-color="blue" onclick="respond('blue')">آبی</button>
+    <button class="color-btn green" data-color="green" onclick="respond('green')">سبز</button>
+    <button class="color-btn yellow" data-color="yellow" onclick="respond('yellow')">زرد</button>
+  </div>
+  <p class="muted" style="text-align:center">
+    کلیدهای صفحه‌کلید: ۱ قرمز | ۲ آبی | ۳ سبز | ۴ زرد
+  </p>
+  <div class="actions">
+    <button class="danger" onclick="abortTest()">توقف آزمون</button>
+  </div>
+</section>
+
+<section class="card hidden" id="between">
+  <h2 id="betweenTitle">پایان مرحله</h2>
+  <p id="betweenText"></p>
+  <div class="actions">
+    <button class="primary" onclick="nextCondition()">ادامه</button>
+  </div>
+</section>
+
+<section class="card hidden" id="results">
+  <h2>نتایج آزمون استروپ</h2>
+  <p class="muted" id="resultInfo"></p>
+  <div id="summary"></div>
+
+  <h3 style="margin-top:20px">مقایسه شرایط آزمایشی</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>شرط</th>
+          <th>تعداد</th>
+          <th>صحیح</th>
+          <th>خطا</th>
+          <th>بدون پاسخ</th>
+          <th>میانگین RT (ms)</th>
+        </tr>
+      </thead>
+      <tbody id="conditionResults"></tbody>
+    </table>
+  </div>
+
+  <h3 style="margin-top:20px">شاخص‌های تداخل</h3>
+  <div id="interference"></div>
+
+  <div class="actions">
+    <button class="primary" onclick="downloadJSON()">دانلود JSON</button>
+    <button class="secondary" onclick="downloadCSV()">دانلود CSV</button>
+    <button class="secondary" onclick="showHistory()">سوابق ذخیره‌شده</button>
+    <button class="danger" onclick="newTest()">آزمون جدید</button>
+  </div>
+</section>
+
+<section class="card hidden" id="history">
+  <h2>سوابق ذخیره‌شده در این دستگاه</h2>
+  <div id="historyContent"></div>
+  <div class="actions">
+    <button class="secondary" onclick="hideHistory()">بازگشت</button>
+    <button class="secondary" onclick="exportAll()">خروجی همه داده‌ها (JSON)</button>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  NeuroCognitive Research Tools | Experimental Version 1.0
+</footer>
+
+<script>
+"use strict";
+
+const STORAGE_KEY = "neurocognitive_stroop_v1";
+
+const COLORS = [
+  {id:"red",name:"قرمز",hex:"#d93636",key:"1"},
+  {id:"blue",name:"آبی",hex:"#2674c9",key:"2"},
+  {id:"green",name:"سبز",hex:"#23945e",key:"3"},
+  {id:"yellow",name:"زرد",hex:"#e7b323",key:"4"}
+];
+
+const CONDITIONS = [
+  {
+    id:"word",
+    title:"مرحله اول: خواندن واژه",
+    instruction:"در این مرحله، فقط معنای واژه را بخوانید و رنگ نوشته را نادیده بگیرید.",
+    example:"مثلاً اگر واژه «قرمز» را می‌بینید، دکمه قرمز را انتخاب کنید؛ حتی اگر نوشته به رنگ آبی باشد.",
+    target:"word"
+  },
+  {
+    id:"color",
+    title:"مرحله دوم: نام‌گذاری رنگ",
+    instruction:"در این مرحله، رنگ محرک را مشخص کنید. به معنای واژه توجه نکنید.",
+    example:"در این مرحله به جای واژه، علامت‌های #### را می‌بینید. رنگ علامت‌ها را انتخاب کنید.",
+    target:"color"
+  },
+  {
+    id:"congruent",
+    title:"مرحله سوم: وضعیت همخوان",
+    instruction:"در این مرحله، رنگ نوشته و معنای واژه یکسان هستند. رنگ نوشته را انتخاب کنید.",
+    example:"اگر واژه «آبی» با رنگ آبی نمایش داده شود، دکمه آبی را فشار دهید.",
+    target:"color"
+  },
+  {
+    id:"incongruent",
+    title:"مرحله چهارم: وضعیت ناهمخوان",
+    instruction:"در این مرحله، رنگ نوشته و معنای واژه متفاوت هستند. فقط رنگ نوشته را انتخاب کنید و معنای واژه را نادیده بگیرید.",
+    example:"اگر واژه «قرمز» با رنگ آبی نمایش داده شود، باید دکمه آبی را انتخاب کنید.",
+    target:"color"
+  }
+];
+
+let participant = {};
+let conditionIndex = 0;
+let trials = [];
+let practiceTrials = [];
+let trialIndex = 0;
+let currentTrial = null;
+let trialStart = 0;
+let timer = null;
+let phase = "idle";
+let results = [];
+let runData = null;
+let testActive = false;
+let interrupted = false;
+
+const $ = id => document.getElementById(id);
+
+function show(id){
+  $(id).classList.remove("hidden");
+}
+function hide(id){
+  $(id).classList.add("hidden");
+}
+function shuffle(array){
+  const a = [...array];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function nowISO(){
+  return new Date().toISOString();
+}
+function deviceInfo(){
+  return {
+    userAgent:navigator.userAgent,
+    language:navigator.language,
+    screenWidth:screen.width,
+    screenHeight:screen.height,
+    viewportWidth:innerWidth,
+    viewportHeight:innerHeight,
+    pixelRatio:devicePixelRatio,
+    platform:navigator.platform
+  };
+}
+function randomChoice(a){
+  return a[Math.floor(Math.random()*a.length)];
+}
+
+function makeTrials(condition,count){
+  const output=[];
+  const ids=COLORS.map(c=>c.id);
+
+  if(condition==="word"){
+    for(let i=0;i<count;i++){
+      const word=randomChoice(ids);
+      const ink=randomChoice(ids);
+      output.push({condition,word,ink,target:word});
+    }
+  }
+
+  if(condition==="color"){
+    for(let i=0;i<count;i++){
+      const ink=randomChoice(ids);
+      output.push({condition,word:null,ink,target:ink});
+    }
+  }
+
+  if(condition==="congruent"){
+    const balanced=[];
+    for(let i=0;i<count;i++){
+      const c=ids[i%ids.length];
+      balanced.push({condition,word:c,ink:c,target:c});
+    }
+    output.push(...shuffle(balanced));
+  }
+
+  if(condition==="incongruent"){
+    const pairs=[];
+    for(let i=0;i<count;i++){
+      const ink=ids[i%ids.length];
+      const others=ids.filter(x=>x!==ink);
+      const word=others[Math.floor((i/4)%others.length)];
+      pairs.push({condition,word,ink,target:ink});
+    }
+    output.push(...shuffle(pairs));
+  }
+
+  return output;
+}
+
+function startTest(){
+  const pid=$("participant").value.trim();
+  if(!pid){
+    alert("لطفاً شناسه آزمودنی را وارد کنید.");
+    $("participant").focus();
+    return;
+  }
+
+  participant={
+    id:pid,
+    session:$("session").value.trim(),
+    age:$("age").value?Number($("age").value):null,
+    gender:$("gender").value||null
+  };
+
+  conditionIndex=0;
+  results=[];
+  interrupted=false;
+
+  runData={
+    id:"ST-"+Date.now(),
+    participant,
+    test:"Stroop Color-Word",
+    version:"1.0",
+    startTime:nowISO(),
+    endTime:null,
+    device:deviceInfo(),
+    protocol:{
+      trialsPerCondition:24,
+      practiceTrialsPerCondition:4,
+      fixationMs:400,
+      responseWindowMs:2500,
+      interTrialIntervalMs:500,
+      conditions:CONDITIONS.map(c=>c.id),
+      responseMode:"touch_and_keyboard"
+    },
+    conditions:[],
+    trials:[],
+    status:"in_progress"
+  };
+
+  hide("intro");
+  showInstruction();
+}
+
+function showInstruction(){
+  const c=CONDITIONS[conditionIndex];
+  $("instructionTitle").textContent=c.title;
+  $("instructionText").textContent=c.instruction;
+  $("instructionExample").textContent=c.example;
+  hide("testArea");
+  hide("between");
+  hide("results");
+  show("instruction");
+}
+
+function startPractice(){
+  hide("instruction");
+  practiceTrials=makeTrials(CONDITIONS[conditionIndex].id,4);
+  trialIndex=0;
+  phase="practice";
+  testActive=true;
+  show("testArea");
+  runNextTrial();
+}
+
+function startMain(){
+  trials=makeTrials(CONDITIONS[conditionIndex].id,24);
+  trialIndex=0;
+  phase="main";
+  testActive=true;
+  runNextTrial();
+}
+
+function renderTrial(){
+  const t=currentTrial;
+  const stim=$("stimulus");
+
+  if(t.condition==="color"){
+    stim.textContent="####";
+  }else{
+    stim.textContent=COLORS.find(c=>c.id===t.word).name;
+  }
+
+  stim.style.color=COLORS.find(c=>c.id===t.ink).hex;
+  stim.classList.remove("hidden");
+  hide("fixation");
+
+  $("conditionLabel").textContent=CONDITIONS[conditionIndex].title;
+  const total=phase==="practice"?practiceTrials.length:trials.length;
+  $("trialLabel").textContent=
+    (phase==="practice"?"تمرین ":"کوشش ")+(trialIndex+1)+" از "+total;
+
+  $("progressBar").style.width=((trialIndex/total)*100)+"%";
+  setButtons(true);
+  trialStart=performance.now();
+  currentTrial.responseWindowStart=trialStart;
+}
+
+function setButtons(enabled){
+  document.querySelectorAll(".color-btn").forEach(b=>b.disabled=!enabled);
+}
+
+function runNextTrial(){
+  if(!testActive)return;
+
+  const list=phase==="practice"?practiceTrials:trials;
+
+  if(trialIndex>=list.length){
+    testActive=false;
+    setButtons(false);
+    hide("testArea");
+    if(phase==="practice"){
+      $("betweenTitle").textContent="پایان تمرین";
+      $("betweenText").textContent=
+        "تمرین این مرحله تمام شد. اکنون مرحله اصلی با ۲۴ کوشش آغاز می‌شود.";
+      show("between");
+      $("between").querySelector("button").onclick=()=>{
+        hide("between");
+        startMain();
+      };
+    }else{
+      finishCondition();
+    }
+    return;
+  }
+
+  currentTrial=list[trialIndex];
+  $("stimulus").classList.add("hidden");
+  show("fixation");
+  setButtons(false);
+
+  timer=setTimeout(()=>{
+    if(!testActive)return;
+    renderTrial();
+    timer=setTimeout(()=>{
+      if(!testActive)return;
+      recordResponse(null,"timeout");
+    },2500);
+  },400);
+}
+
+function respond(color){
+  if(!testActive || !currentTrial || currentTrial.responded)return;
+  recordResponse(color,"response");
+}
+
+function recordResponse(color,source){
+  if(!testActive || !currentTrial || currentTrial.responded)return;
+
+  currentTrial.responded=true;
+  clearTimeout(timer);
+
+  const rt=source==="response"
+    ? Math.round(performance.now()-currentTrial.responseWindowStart)
+    : null;
+
+  const correct=color===currentTrial.target;
+  const record={
+    condition:currentTrial.condition,
+    word:currentTrial.word,
+    ink:currentTrial.ink,
+    target:currentTrial.target,
+    response:color,
+    correct:source==="response"?correct:false,
+    noResponse:source==="timeout",
+    responseSource:source,
+    reactionTimeMs:rt,
+    trialNumber:trialIndex+1,
+    phase
+  };
+
+  if(phase==="main"){
+    runData.trials.push(record);
+  }
+
+  $("stimulus").classList.add("hidden");
+  show("fixation");
+  setButtons(false);
+
+  trialIndex++;
+
+  timer=setTimeout(()=>{
+    runNextTrial();
+  },500);
+}
+
+function finishCondition(){
+  const condition=CONDITIONS[conditionIndex];
+  const data=runData.trials.filter(t=>t.condition===condition.id);
+  const stats=calculateStats(data);
+
+  runData.conditions.push({
+    id:condition.id,
+    title:condition.title,
+    ...stats
+  });
+
+  if(conditionIndex<CONDITIONS.length-1){
+    $("betweenTitle").textContent="پایان "+condition.title;
+    $("betweenText").textContent=
+      "این مرحله به پایان رسید. برای شروع مرحله بعدی آماده شوید.";
+    show("between");
+    $("between").querySelector("button").onclick=()=>{
+      conditionIndex++;
+      showInstruction();
+    };
+  }else{
+    finishTest();
+  }
+}
+
+function calculateStats(data){
+  const n=data.length;
+  const correct=data.filter(t=>t.correct).length;
+  const errors=data.filter(t=>!t.correct&&!t.noResponse).length;
+  const noResponse=data.filter(t=>t.noResponse).length;
+  const validRT=data.filter(t=>t.correct&&t.reactionTimeMs!==null)
+                    .map(t=>t.reactionTimeMs);
+  const meanRT=validRT.length
+    ?Math.round(validRT.reduce((a,b)=>a+b,0)/validRT.length):null;
+
+  const allRT=data.filter(t=>t.reactionTimeMs!==null)
+                  .map(t=>t.reactionTimeMs);
+  const meanAllRT=allRT.length
+    ?Math.round(allRT.reduce((a,b)=>a+b,0)/allRT.length):null;
+
+  return {
+    total:n,correct,errors,noResponse,
+    accuracy:n?Number((correct/n*100).toFixed(2)):0,
+    meanCorrectRT:meanRT,
+    meanAllRT,
+    medianCorrectRT:median(validRT)
+  };
+}
+
+function median(values){
+  if(!values.length)return null;
+  const a=[...values].sort((x,y)=>x-y);
+  const m=Math.floor(a.length/2);
+  return a.length%2?a[m]:Math.round((a[m-1]+a[m])/2);
+}
+
+function finishTest(){
+  testActive=false;
+  clearTimeout(timer);
+  setButtons(false);
+  runData.endTime=nowISO();
+  runData.status="completed";
+
+  const word=runData.conditions.find(c=>c.id==="word");
+  const color=runData.conditions.find(c=>c.id==="color");
+  const congruent=runData.conditions.find(c=>c.id==="congruent");
+  const incongruent=runData.conditions.find(c=>c.id==="incongruent");
+
+  runData.indices={
+    stroopInterferenceMs:
+      congruent.meanCorrectRT!==null&&incongruent.meanCorrectRT!==null
+      ?incongruent.meanCorrectRT-congruent.meanCorrectRT:null,
+    wordColorDifferenceMs:
+      word.meanCorrectRT!==null&&color.meanCorrectRT!==null
+      ?word.meanCorrectRT-color.meanCorrectRT:null,
+    accuracyDifference:
+      congruent.accuracy-incongruent.accuracy
+  };
+
+  runData.completedTrials=runData.trials.length;
+  saveRun();
+
+  hide("testArea");
+  hide("between");
+  showResults();
+}
+
+function showResults(){
+  const conditions=runData.conditions;
+  $("resultInfo").textContent=
+    "آزمودنی: "+participant.id+
+    " | جلسه: "+(participant.session||"ثبت نشده")+
+    " | تعداد کوشش: "+runData.completedTrials;
+
+  $("conditionResults").innerHTML="";
+  conditions.forEach(c=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${c.title.replace("مرحله ","")}</td>
+      <td>${c.total}</td>
+      <td>${c.correct}</td>
+      <td>${c.errors}</td>
+      <td>${c.noResponse}</td>
+      <td>${c.meanCorrectRT??"—"}</td>`;
+    $("conditionResults").appendChild(tr);
+  });
+
+  const totalCorrect=runData.trials.filter(t=>t.correct).length;
+  const total=runData.trials.length;
+  const totalAccuracy=total?((totalCorrect/total)*100).toFixed(1):0;
+
+  $("summary").innerHTML=`
+    <div class="big-number">${totalAccuracy}٪</div>
+    <p>دقت کلی آزمون</p>
+    <p>پاسخ صحیح: ${totalCorrect} از ${total}</p>
+  `;
+
+  const idx=runData.indices;
+  $("interference").innerHTML=`
+    <p><strong>اثر تداخل استروپ:</strong>
+    ${idx.stroopInterferenceMs===null?"قابل محاسبه نیست":idx.stroopInterferenceMs+" میلی‌ثانیه"}</p>
+    <p><strong>تفاوت زمان خواندن و نام‌گذاری رنگ:</strong>
+    ${idx.wordColorDifferenceMs===null?"قابل محاسبه نیست":idx.wordColorDifferenceMs+" میلی‌ثانیه"}</p>
+    <p><strong>تفاوت دقت همخوان و ناهمخوان:</strong>
+    ${idx.accuracyDifference.toFixed(2)} واحد درصد</p>
+    <p class="muted">
+      زمان واکنش میانگین فقط بر اساس پاسخ‌های صحیح محاسبه شده است.
+      اثر تداخل از تفاضل میانگین زمان واکنش صحیح در شرایط ناهمخوان و
+      همخوان به دست آمده است.
+    </p>
+  `;
+
+  show("results");
+}
+
+function saveRun(){
+  try{
+    const old=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
+    old.push(runData);
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(old));
+    return true;
+  }catch(e){
+    console.error(e);
+    alert("ذخیره خودکار انجام نشد. لطفاً خروجی JSON را دانلود کنید.");
+    return false;
+  }
+}
+
+function downloadFile(filename,content,type){
+  const blob=new Blob([content],{type});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+function downloadJSON(){
+  if(!runData)return;
+  downloadFile(
+    "Stroop_"+participant.id+"_"+Date.now()+".json",
+    JSON.stringify(runData,null,2),
+    "application/json;charset=utf-8"
+  );
+}
+
+function csvEscape(value){
+  if(value===null||value===undefined)return "";
+  const s=String(value);
+  return '"'+s.replace(/"/g,'""')+'"';
+}
+
+function downloadCSV(){
+  if(!runData)return;
+
+  const headers=[
+    "participant_id","session_id","age","gender",
+    "run_id","trial_number","phase","condition",
+    "word","ink_color","target","response",
+    "correct","no_response","response_source","reaction_time_ms"
+  ];
+
+  const rows=runData.trials.map(t=>[
+    participant.id,participant.session,participant.age,participant.gender,
+    runData.id,t.trialNumber,t.phase,t.condition,
+    t.word,t.ink,t.target,t.response,
+    t.correct,t.noResponse,t.responseSource,t.reactionTimeMs
+  ]);
+
+  const csv=[
+    headers.map(csvEscape).join(","),
+    ...rows.map(row=>row.map(csvEscape).join(","))
+  ].join("\n");
+
+  downloadFile(
+    "Stroop_trials_"+participant.id+".csv",
+    "\uFEFF"+csv,
+    "text/csv;charset=utf-8"
+  );
+}
+
+function showHistory(){
+  hide("results");
+  show("history");
+
+  let records=[];
+  try{
+    records=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
+  }catch(e){records=[];}
+
+  if(!records.length){
+    $("historyContent").innerHTML="<p>هنوز داده‌ای ذخیره نشده است.</p>";
+    return;
+  }
+
+  $("historyContent").innerHTML=`
+    <p>تعداد اجراهای ذخیره‌شده: ${records.length}</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>شناسه</th><th>تاریخ</th><th>وضعیت</th></tr></thead>
+        <tbody>
+          ${records.map(r=>`
+            <tr>
+              <td>${escapeHTML(r.participant?.id||"—")}</td>
+              <td>${escapeHTML(r.startTime||"—")}</td>
+              <td>${escapeHTML(r.status||"—")}</td>
+            </tr>`).join("")}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function escapeHTML(value){
+  return String(value).replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",
+    '"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function hideHistory(){
+  hide("history");
+  show("results");
+}
+
+function exportAll(){
+  let records=[];
+  try{
+    records=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
+  }catch(e){}
+  downloadFile(
+    "NeuroCognitive_Stroop_Backup.json",
+    JSON.stringify({
+      exportedAt:nowISO(),
+      application:"NeuroCognitive Stroop",
+      version:"1.0",
+      records
+    },null,2),
+    "application/json;charset=utf-8"
+  );
+}
+
+function abortTest(){
+  if(!confirm("آیا مطمئن هستید که می‌خواهید آزمون متوقف شود؟"))return;
+  clearTimeout(timer);
+  testActive=false;
+  setButtons(false);
+
+  if(runData){
+    runData.endTime=nowISO();
+    runData.status="aborted";
+    runData.completedTrials=runData.trials.length;
+    runData.interruptionReason="manual_stop";
+    saveRun();
+  }
+
+  hide("testArea");
+  hide("instruction");
+  hide("between");
+  show("intro");
+  alert("آزمون متوقف شد. داده‌های کوشش‌های تکمیل‌شده ذخیره شدند.");
+}
+
+function newTest(){
+  if(!confirm("آیا آزمون جدیدی آغاز شود؟"))return;
+  clearTimeout(timer);
+  testActive=false;
+  runData=null;
+  participant={};
+  conditionIndex=0;
+  trialIndex=0;
+  results=[];
+  hide("results");
+  show("intro");
+}
+
+document.addEventListener("keydown",event=>{
+  if(!testActive || phase==="idle")return;
+
+  const keyMap={"1":"red","2":"blue","3":"green","4":"yellow"};
+  if(keyMap[event.key]){
+    event.preventDefault();
+    respond(keyMap[event.key]);
+  }
+});
+
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden && testActive){
+    interrupted=true;
+    clearTimeout(timer);
+    testActive=false;
+    setButtons(false);
+
+    if(runData){
+      runData.status="interrupted";
+      runData.interruptionReason="page_hidden_or_tab_switched";
+      runData.interruptionTime=nowISO();
+      saveRun();
+    }
+
+    alert(
+      "صفحه آزمون از حالت فعال خارج شد. برای حفظ کیفیت زمان‌بندی، " +
+      "این اجرا متوقف شد. لطفاً آزمون را از ابتدا اجرا کنید."
+    );
+
+    hide("testArea");
+    hide("instruction");
+    hide("between");
+    show("intro");
+  }
+});
+</script>
+</body>
+</html>
